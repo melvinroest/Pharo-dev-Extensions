@@ -22,5 +22,5 @@ Array >> logToJSconsole [
 	driver executeScript: 'console.log(stTemp)' with: #().
 	driver executeScript: 'console.log(`----------------------`)' with: #().
 	
-	^ currentTimeStamp
+	^ self
 ]
