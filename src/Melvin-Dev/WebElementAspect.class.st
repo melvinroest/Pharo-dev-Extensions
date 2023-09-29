@@ -13,7 +13,7 @@ WebElementAspect class >> extractArgsFrom: argString [
 	| tokens args |
 	tokens := argString substrings: ' '.
 	args := (tokens select: [ :each | each beginsWith: '__arg' ]).
-	args := args collect: [ :each | $' asString, each, $' asString, '.' ].
+	args := args collect: [ :each | each, '.' ].
 	args := ' ' join: args.
 	^ '{', args, '}'.
 ]
@@ -47,27 +47,33 @@ WebElementAspect class >> originalMethodFor: selector in: aClass [
 
 { #category : #'as yet unclassified' }
 WebElementAspect class >> resetMethod: selector in: targetClass [
-	| originalMethod |
-	originalMethod := self originalMethodFor: selector in: targetClass.
-	originalMethod ifNotNil: [
-		targetClass methodDictionary at: selector put: originalMethod.
-		targetClass recompile: selector ].
+	| originalMethodData originalSourceCode |
+
+	originalMethodData := self originalMethodFor: selector in: targetClass.
+	originalMethodData ifNotNil: [
+		originalSourceCode := (originalMethodData at: 'sourceCode').
+		targetClass removeSelector: selector.
+		targetClass compile: originalSourceCode ].
+
 ]
 
 { #category : #'as yet unclassified' }
 WebElementAspect class >> storeOriginalMethod: aMethod for: selector in: aClass [
-	OriginalMethods at: {aClass. selector} put: aMethod.
+	| methodData |
+	methodData := Dictionary new.
+	methodData at: 'selector' put: selector.
+	methodData at: 'sourceCode' put: aMethod sourceCode.
+	OriginalMethods at: {aClass. selector} put: methodData.
 
 ]
 
 { #category : #'as yet unclassified' }
 WebElementAspect class >> wrapMethodWithDelay: selector onClass: targetClass [
-	| originalMethod keywordsWithArgs argumentList someCode originalMethodString n |
-	
-	self storeOriginalMethod: (targetClass compiledMethodAt: selector) for: selector in: targetClass.
+	| originalMethod keywordsWithArgs argumentList someCode n originalMethodObjectName |
 	
 	originalMethod := targetClass compiledMethodAt: selector.
-	originalMethodString := '(_', targetClass asString, '>>#', originalMethod selector asString, ')'.
+	originalMethodObjectName := '(', self asString, ' originalMethodFor: #', selector asString, ' in: ', targetClass asString,')'.
+	self storeOriginalMethod: originalMethod for: selector in: targetClass.
 	keywordsWithArgs := self generateArgumentsFor: originalMethod.
 	argumentList := self extractArgsFrom: keywordsWithArgs. "{'__arg1'. '__arg2'.}"
 	n := Character cr asString.
@@ -76,7 +82,7 @@ WebElementAspect class >> wrapMethodWithDelay: selector onClass: targetClass [
 		n,
 		'|result|', n,
 		'(Delay forSeconds: 0.25) wait.', n,
-		'result := ', originalMethodString,' valueWithReceiver: self arguments: (Array withAll: ', argumentList, ').', n,
+		'result := ', originalMethodObjectName, ' valueWithReceiver: self arguments: (Array withAll: ', argumentList, ').', n,
 		'(Delay forSeconds: 0.25) wait.', n,
 		'^ result'.
 
