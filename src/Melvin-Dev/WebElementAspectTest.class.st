@@ -5,6 +5,11 @@ Class {
 }
 
 { #category : #tests }
+WebElementAspectTest class >> + argBinary [
+	^ self asString, ' hi'
+]
+
+{ #category : #tests }
 WebElementAspectTest class >> keywordMethod: arg1 with: arg2 [ 
 	^ arg1 + arg2.
 ]
@@ -12,11 +17,6 @@ WebElementAspectTest class >> keywordMethod: arg1 with: arg2 [
 { #category : #tests }
 WebElementAspectTest class >> simpleMethod [ 
 	^ 'Simple method executed'.
-]
-
-{ #category : #tests }
-WebElementAspectTest class >> threeKeywordMethod: arg1 foo: arg2 bar: arg3 [
-	^ arg1, ' ', arg2 asString, ' ', arg3 asString.
 ]
 
 { #category : #tests }
