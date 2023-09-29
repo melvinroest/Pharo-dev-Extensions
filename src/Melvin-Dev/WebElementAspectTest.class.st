@@ -5,6 +5,11 @@ Class {
 }
 
 { #category : #tests }
+WebElementAspectTest class >> keywordMethod: arg1 with: arg2 [ 
+	^ arg1 + arg2.
+]
+
+{ #category : #tests }
 WebElementAspectTest class >> simpleMethod [ 
 	^ 'Simple method executed'.
 ]
