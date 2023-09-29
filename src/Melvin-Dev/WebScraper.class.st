@@ -71,7 +71,7 @@ makeClickVisible = (e) => {
 '.
 	
 	driver executeScript: makeClickVisibleScript with: #().
-	driver executeScript: 'document.addEventListener(`click`, makeClickVisible, true)' with: #().
+	driver executeScript: 'document.addEventListener(`mousedown`, makeClickVisible, true)' with: #().
 ]
 
 { #category : #'as yet unclassified' }
