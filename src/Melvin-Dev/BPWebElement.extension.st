@@ -48,6 +48,6 @@ BPWebElement >> getHtml [
 ]
 
 { #category : #'*Melvin-Dev' }
-BPWebElement >> logToJSconsole [
-	{ self } logToJSconsole 
+BPWebElement >> logToJSConsole [
+	{ self } logToJSConsole 
 ]
