@@ -15,13 +15,8 @@ WebElementAspectTest class >> simpleMethod [
 ]
 
 { #category : #tests }
-WebElementAspectTest class >> threeKeywordMethod: __arg1 foo: __arg2 bar: __arg3 [
-
-|result|
-(Delay forSeconds: 0.25) wait.
-result := (WebElementAspectTest class>>#threeKeywordMethod:foo:bar:) valueWithReceiver: self arguments: (Array withAll: {'__arg1'. '__arg2'. '__arg3'.}).
-(Delay forSeconds: 0.25) wait.
-^ result
+WebElementAspectTest class >> threeKeywordMethod: arg1 foo: arg2 bar: arg3 [
+	^ arg1, ' ', arg2 asString, ' ', arg3 asString.
 ]
 
 { #category : #tests }
