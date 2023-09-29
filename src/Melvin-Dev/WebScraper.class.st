@@ -21,6 +21,55 @@ WebScraper class >> getScrollPositionWithDriver: driver andElement: webElement [
 ]
 
 { #category : #'as yet unclassified' }
+WebScraper class >> installVisualClickForDriver: driver [
+	
+	| makeClickVisibleScript |
+	makeClickVisibleScript := '
+makeClickVisible = (e) => {
+    const body = document.body
+    const circle = document.createElement(`div`)
+    const x = e.clientX
+    const y = e.clientY
+    console.log(x, y)
+
+    Object.assign(circle.style, {
+        width: `10px`,
+        height: `10px`,
+        borderRadius: `50%`,
+        backgroundColor: `transparent`,
+        border: `1px solid red`,
+        position: `absolute`,
+        left: `${x}px`,
+        top: `${y}px`,
+        zIndex: 99999,
+        opacity: 1,
+        transition: `width 1s, height 1s, opacity 1s`,
+        transform: `translate(-50%, -50%)`
+    });
+
+    body.appendChild(circle)
+
+    // Trigger the animation after a brief timeout to ensure initial styles are applied
+    setTimeout(() => {
+        Object.assign(circle.style, {
+            width: `50px`,
+            height: `50px`,
+            opacity: 0
+        })
+    }, 10)
+
+    // Remove the circle from the DOM after the animation completes
+    setTimeout(() => {
+        body.removeChild(circle);
+    }, 1010)
+}
+'.
+	
+	driver executeScript: makeClickVisibleScript with: #().
+	driver executeScript: 'document.addEventListener(`click`, makeClickVisible)' with: #().
+]
+
+{ #category : #'as yet unclassified' }
 WebScraper class >> keysForRemoval [
 	^ String with: BPKeys delete with: BPKeys backSpace.
 ]
