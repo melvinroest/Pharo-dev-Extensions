@@ -33,18 +33,18 @@ makeClickVisible = (e) => {
 	console.log(x, y)
 
 	Object.assign(circle.style, {
-		width: `10px`,
-		height: `10px`,
+		width: `15px`,
+		height: `15px`,
 		borderRadius: `50%`,
 		backgroundColor: `transparent`,
-		border: `1px solid red`,
+		border: `3px solid red`,
 		position: `absolute`,
 		left: `${x}px`,
 		top: `${y}px`,
 		zIndex: `2147483647`,
 		pointerEvents: `none`,
 		opacity: 1,
-		transition: `width 1s, height 1s, opacity 1s`,
+		transition: `width 2s, height 2s, opacity 2s`,
 		transform: `translate(-50%, -50%)`
 	});
 
@@ -66,7 +66,7 @@ makeClickVisible = (e) => {
 	// Remove the circle from the DOM after the animation completes
 	setTimeout(() => {
 		body.removeChild(circle);
-	}, 1010)
+	}, 2010)
 }
 '.
 	

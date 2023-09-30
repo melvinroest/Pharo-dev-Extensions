@@ -49,6 +49,14 @@ WebElementAspect class >> originalMethodFor: selector in: aClass [
 ]
 
 { #category : #'as yet unclassified' }
+WebElementAspect class >> resetAllMethods [
+	WebElementAspect resetMethod: #click in: BPWebElement.
+	WebElementAspect resetMethod: #clear in: BPWebElement.
+	WebElementAspect resetMethod: #sendKeys: in: BPWebElement.
+	WebElementAspect resetMethod: #privatePerformActions: in: BPRemoteWebDriver.
+]
+
+{ #category : #'as yet unclassified' }
 WebElementAspect class >> resetMethod: selector in: aClass [
 	| originalMethodData originalSourceCode |
 
@@ -72,21 +80,27 @@ WebElementAspect class >> storeOriginalMethod: aMethod for: selector in: aClass 
 ]
 
 { #category : #'as yet unclassified' }
+WebElementAspect class >> wrapAllMethods [
+	WebElementAspect wrapMethodWithDelay: #click onClass: BPWebElement.
+	WebElementAspect wrapMethodWithDelay: #clear onClass: BPWebElement.
+	WebElementAspect wrapMethodWithDelay: #sendKeys: onClass: BPWebElement.
+	WebElementAspect wrapMethodWithActionDelay: #privatePerformActions: onClass: BPRemoteWebDriver.
+]
+
+{ #category : #'as yet unclassified' }
 WebElementAspect class >> wrapMethodWithActionDelay: selector onClass: targetClass [
-	| originalMethod keywordsWithArgs argumentList someCode n originalMethodObjectName |
+	| originalMethod someCode n |
 	
 	originalMethod := targetClass compiledMethodAt: selector.
-	originalMethodObjectName := '(', self asString, ' originalMethodFor: #', selector asString, ' in: ', targetClass asString,')'.
-	keywordsWithArgs := self generateArgumentsFor: originalMethod.
-	argumentList := self extractArgsFrom: keywordsWithArgs. "{'__arg1'. '__arg2'.}"
 	n := Character cr asString.
 	
-	someCode := keywordsWithArgs, n,
+	someCode := 'privatePerformActions: actions', n,
 		n,
 		'|result newActions pauseAction|', n,
-		'pauseAction := (BPPauseAction driver: self).', n,
+		'WebScraper installVisualClickForDriver: self.', n,
+		'pauseAction := (BPPauseAction driver: self withPause: 1000).', n,
 		'newActions := actions flatCollect: [ :value | { value. pauseAction } ].', n,
-		'result := ', originalMethodObjectName, ' valueWithReceiver: self arguments: (Array withAll: ', argumentList, ').', n,
+		'result := (WebElementAspect originalMethodFor: #privatePerformActions: in: BPRemoteWebDriver) valueWithReceiver: self arguments: (Array withAll: {newActions}).', n,
 		'^ result'.
 	
 	self storeOriginalMethod: originalMethod for: selector in: targetClass.
