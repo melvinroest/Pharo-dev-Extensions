@@ -84,9 +84,9 @@ WebElementAspect class >> wrapMethodWithDelay: selector onClass: targetClass [
 	someCode := keywordsWithArgs, n,
 		n,
 		'|result|', n,
-		'(Delay forSeconds: 0.25) wait.', n,
+		'(Delay forSeconds: 1.25) wait.', n,
 		'result := ', originalMethodObjectName, ' valueWithReceiver: self arguments: (Array withAll: ', argumentList, ').', n,
-		'(Delay forSeconds: 0.25) wait.', n,
+		'(Delay forSeconds: 1.25) wait.', n,
 		'^ result'.
 	
 	self storeOriginalMethod: originalMethod for: selector in: targetClass.
