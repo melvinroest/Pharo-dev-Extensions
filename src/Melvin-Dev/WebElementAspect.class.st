@@ -44,7 +44,7 @@ WebElementAspect class >> initialize [
 WebElementAspect class >> originalMethodFor: selector in: aClass [
 	| originalMethodData |
 	 originalMethodData := OriginalMethods at: {aClass. selector} ifAbsent: [ ^ nil ].
-	^ originalMethodData at: 'compiledCode' ifAbsent: [nil]. "Return the method selector (or change it to return the compiled method if you stored that)"
+	^ originalMethodData at: 'compiledCode' ifAbsent: [ nil ].
 
 ]
 
@@ -69,6 +69,42 @@ WebElementAspect class >> storeOriginalMethod: aMethod for: selector in: aClass 
 	methodData at: 'compiledCode' put: aMethod.
 	OriginalMethods at: {aClass. selector} put: methodData.
 
+]
+
+{ #category : #'as yet unclassified' }
+WebElementAspect class >> wrapMethodWithActionDelay: selector onClass: targetClass [
+	| originalMethod keywordsWithArgs argumentList someCode n originalMethodObjectName |
+	
+	originalMethod := targetClass compiledMethodAt: selector.
+	originalMethodObjectName := '(', self asString, ' originalMethodFor: #', selector asString, ' in: ', targetClass asString,')'.
+	keywordsWithArgs := self generateArgumentsFor: originalMethod.
+	argumentList := self extractArgsFrom: keywordsWithArgs. "{'__arg1'. '__arg2'.}"
+	n := Character cr asString.
+	
+	someCode := keywordsWithArgs, n,
+		n,
+		'|result newActions pauseAction|', n,
+		'pauseAction := (BPPauseAction driver: self).', n,
+		'newActions := actions flatCollect: [ :value | { value. pauseAction } ].', n,
+		'result := ', originalMethodObjectName, ' valueWithReceiver: self arguments: (Array withAll: ', argumentList, ').', n,
+		'^ result'.
+	
+	self storeOriginalMethod: originalMethod for: selector in: targetClass.
+
+	targetClass compile: someCode
+	
+"
+privatePerformActions: actions
+
+|result newActions pauseAction|
+
+pauseAction := (BPPauseAction driver: self).
+newActions := actions flatCollect: [ :value | { value. pauseAction } ].
+""result := (WebElementAspect originalMethodFor: #privatePerformActionsOriginal: in: BPWebElement) valueWithReceiver: self arguments: (Array withAll: {newActions}).""
+result := self privatePerformActionsOriginal: newActions.
+^ result
+
+"
 ]
 
 { #category : #'as yet unclassified' }
