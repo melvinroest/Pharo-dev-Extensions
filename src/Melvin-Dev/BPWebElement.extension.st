@@ -53,6 +53,54 @@ BPWebElement >> getHtml [
 ]
 
 { #category : #'*Melvin-Dev' }
-BPWebElement >> logToJSconsole [
-	{ self } logToJSconsole 
+BPWebElement >> logToJSConsole [
+	{ self } logToJSConsole 
+]
+
+{ #category : #'*Melvin-Dev' }
+BPWebElement >> visiblyClickAt: aPoint [
+
+	| makeClickVisibleScript |
+	self clickAt: aPoint.
+	makeClickVisibleScript := '
+makeClickVisible = (el, x, y) => { 
+    const body = document.body;
+    const circle = document.createElement(`div`);
+    const rect = el.getBoundingClientRect();
+
+    Object.assign(circle.style, {
+        width: `10px`,
+        height: `10px`,
+        borderRadius: `50%`,
+        backgroundColor: `transparent`,
+        border: `1px solid red`,
+        position: `absolute`,
+        left: `${rect.left + x}px`,
+        top: `${rect.top + y}px`,
+        zIndex: `99999`,
+        opacity: `1`,
+        transition: `width 0.5s, height 0.5s, opacity 0.5s`,
+        transform: `translate(-50%, -50%)`
+    });
+
+    body.appendChild(circle);
+
+    // Trigger the animation after a brief timeout to ensure initial styles are applied
+    setTimeout(() => {
+        Object.assign(circle.style, {
+            width: `50px`,
+            height: `50px`,
+            opacity: `0`
+        });
+    }, 10);
+
+    // Remove the circle from the DOM after the animation completes
+    setTimeout(() => {
+        body.removeChild(circle);
+    }, 510);  // A little over 0.5s to ensure animation completes
+}
+'.
+
+	driver executeScript: makeClickVisibleScript with: #().
+	driver executeScript: 'makeClickVisible(arguments[0], arguments[1], arguments[2])' with: { self. aPoint x. aPoint y }.
 ]
