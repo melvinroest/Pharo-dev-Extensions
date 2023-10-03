@@ -43,6 +43,11 @@ isElementOutsideContainer = (el, container) => {
 ]
 
 { #category : #'*Melvin-Dev' }
+BPWebElement >> findChildren [
+	^ self findElementsBy: 'xpath' with: './*'
+]
+
+{ #category : #'*Melvin-Dev' }
 BPWebElement >> getHtml [
 	^ self driver executeScript: 'return arguments[0].outerHTML' with: { self }
 ]
