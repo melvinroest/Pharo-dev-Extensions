@@ -12,7 +12,18 @@ MDevelopment class >> copyImageDirectoryCommandOn: builder [
 	(builder item: 'Copy Image Directory')
 		parent: #'Melvin''s Toolkit';
 		order: 1.0;
-		action: [ Clipboard clipboardText: Smalltalk imagePath asFileReference parent fullName ]
+		action: [ Clipboard clipboardText: FileLocator workingDirectory fullName ]
+]
+
+{ #category : #'as yet unclassified' }
+MDevelopment class >> copyLocalIcebergPathCommandOn: builder [
+
+	<worldMenu>
+	
+	(builder item: 'Copy Iceberg Path')
+		parent: #'Melvin''s Toolkit';
+		order: 1.0;
+		action: [ Clipboard clipboardText: (SystemResolver defaultLocalDirectory / 'iceberg') fullName ]
 ]
 
 { #category : #'as yet unclassified' }
