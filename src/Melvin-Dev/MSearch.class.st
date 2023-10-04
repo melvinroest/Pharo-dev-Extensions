@@ -35,9 +35,7 @@ MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inPackageA
 
 	| classes results allTags |
 	allTags := packages flatCollect: [ :package | 
-		(package includesSubstring: exclusion) 
-			ifTrue: [ #() ] 
-			ifFalse: [ SystemOrganization categories select: [ :each | each beginsWith: package ] ] ].
+		exclusion ifNotNil: [ SystemOrganization categories select: [ :each | (each beginsWith: package) and: [ (each includesSubstring: exclusion) not ] ] ] ].
 
 	classes := allTags flatCollect: [ :tag |
 		SystemOrganization classesInCategory: tag ].
