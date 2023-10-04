@@ -25,35 +25,14 @@ MSearch class >> searchSourceCode: searchString inTagArray: tags [
 ]
 
 { #category : #'as yet unclassified' }
-MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inPackageArray: packages [
+MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString asPackage: aBoolean inArray: packages excludingSubstring: exclusion [
 
-	^ self searchSourceCodeAndReturnEverythingFor: searchString inPackageArray: packages excludingSubstring: ''
-]
+	| classes results tags |
+	tags := packages.
+	aBoolean ifTrue: [
+		tags := packages flatCollect: [ :package | 
+			exclusion ifNotNil: [ SystemOrganization categories select: [ :each | (each beginsWith: package) and: [ (each includesSubstring: exclusion) not ] ] ] ] ].
 
-{ #category : #'as yet unclassified' }
-MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inPackageArray: packages excludingSubstring: exclusion [
-
-	| classes results allTags |
-	allTags := packages flatCollect: [ :package | 
-		exclusion ifNotNil: [ SystemOrganization categories select: [ :each | (each beginsWith: package) and: [ (each includesSubstring: exclusion) not ] ] ] ].
-
-	classes := allTags flatCollect: [ :tag |
-		SystemOrganization classesInCategory: tag ].
-
-	results := classes flatCollect: [ :class |
-		(class methods, class class methods) select: [ :method |
-			method sourceCode includesSubstring: searchString caseSensitive: false ] ].
-
-	^ results
-
-]
-
-{ #category : #'as yet unclassified' }
-MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inTagArray: tags [
-	"There is no difference between a tag and a package name in the object creation code"
-	"This code is an exclusive search for the package name since it won't go through all the tags"
-
-	| classes results |
 	classes := tags flatCollect: [ :tag |
 		SystemOrganization classesInCategory: tag ].
 
@@ -62,4 +41,29 @@ MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inTagArray
 			method sourceCode includesSubstring: searchString caseSensitive: false ] ].
 
 	^ results
+
+]
+
+{ #category : #'as yet unclassified' }
+MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inPackageArray: packages [
+
+	^ self searchSourceCodeAndReturnEverythingFor: searchString asPackage: true inArray: packages excludingSubstring: nil
+]
+
+{ #category : #'as yet unclassified' }
+MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inPackageArray: packages excludingSubstring: exclusion [
+
+	^ self searchSourceCodeAndReturnEverythingFor: searchString asPackage: true inArray: packages excludingSubstring: exclusion
+]
+
+{ #category : #'as yet unclassified' }
+MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inTagArray: tags [
+	
+	^ self searchSourceCodeAndReturnEverythingFor: searchString asPackage: false inArray: tags excludingSubstring: nil
+]
+
+{ #category : #'as yet unclassified' }
+MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inTagArray: tags excludingSubstring: exclusion [
+	
+	^ self searchSourceCodeAndReturnEverythingFor: searchString asPackage: false inArray: tags excludingSubstring: exclusion
 ]
