@@ -27,9 +27,17 @@ MSearch class >> searchSourceCode: searchString inTagArray: tags [
 { #category : #'as yet unclassified' }
 MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inPackageArray: packages [
 
+	^ self searchSourceCodeAndReturnEverythingFor: searchString inPackageArray: packages excludingSubstring: ''
+]
+
+{ #category : #'as yet unclassified' }
+MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inPackageArray: packages excludingSubstring: exclusion [
+
 	| classes results allTags |
 	allTags := packages flatCollect: [ :package | 
-		SystemOrganization categories select: [ :each | each beginsWith: package ] ].
+		(package includesSubstring: exclusion) 
+			ifTrue: [ #() ] 
+			ifFalse: [ SystemOrganization categories select: [ :each | each beginsWith: package ] ] ].
 
 	classes := allTags flatCollect: [ :tag |
 		SystemOrganization classesInCategory: tag ].
@@ -39,6 +47,7 @@ MSearch class >> searchSourceCodeAndReturnEverythingFor: searchString inPackageA
 			method sourceCode includesSubstring: searchString caseSensitive: false ] ].
 
 	^ results
+
 ]
 
 { #category : #'as yet unclassified' }
