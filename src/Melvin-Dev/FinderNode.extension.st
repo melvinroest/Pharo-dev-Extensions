@@ -21,5 +21,9 @@ FinderNode >> menu: menu shifted: aBoolean [
 		add: 'Copy All'
 		target: self model
 		selector: #copyAll.
+	menu
+		add: 'Copy All Roots'
+		target: self model
+		selector: #copyAllRoots.
 	^menu
 ]
