@@ -6,6 +6,23 @@ BPWebElement >> driver [
 ]
 
 { #category : #'*Melvin-Dev' }
+BPWebElement >> exeElementIsOutsideOfTopOfContainer: aContainer withMargin: aMarginNumber [
+	"Todo: needs to be tested for left, right and bottom"
+	
+	| isElementOutsideContainer |
+	isElementOutsideContainer := '
+isElementOutsideContainer = (el, container, margin = 0) => {
+    const eleRect = el.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
+    return eleRect.top < containerRect.top + margin
+}
+	'.
+	
+	driver executeScript: isElementOutsideContainer with: #().
+	^ driver executeScript: 'return isElementOutsideContainer(arguments[0], arguments[1], arguments[2])' with: { self. aContainer. aMarginNumber }.
+]
+
+{ #category : #'*Melvin-Dev' }
 BPWebElement >> exeGetYPositionOfElement [
 	| getYPositionOfElement |
 	
@@ -26,20 +43,43 @@ BPWebElement >> exeIsElementOutsideContainer: aContainer [
 	
 	isElementOutsideContainer := '
 isElementOutsideContainer = (el, container) => {
-    const rect = el.getBoundingClientRect();
+    const ele = el.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
 
     return (
-        rect.bottom < containerRect.top ||
-        rect.top > containerRect.bottom ||
-        rect.right < containerRect.left ||
-        rect.left > containerRect.right
+        ele.bottom < containerRect.top ||
+        ele.top > containerRect.bottom ||
+        ele.right < containerRect.left ||
+        ele.left > containerRect.right
     );
 };
 	'.
 	
 	driver executeScript: isElementOutsideContainer with: #().
 	^ driver executeScript: 'return isElementOutsideContainer(arguments[0], arguments[1])' with: { self. aContainer }.
+]
+
+{ #category : #'*Melvin-Dev' }
+BPWebElement >> exeIsElementOutsideContainer: aContainer withMargin: aMarginNumber [
+	"Todo: needs to be tested for left, right and bottom"
+	
+	| isElementOutsideContainer |
+	isElementOutsideContainer := '
+isElementOutsideContainer = (el, container, margin = 0) => {
+    const eleRect = el.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    console.log(eleRect.top, containerRect.top + margin)
+    return (
+        eleRect.top < containerRect.top + margin ||
+        eleRect.bottom > containerRect.bottom - margin ||
+        eleRect.left < containerRect.left + margin ||
+        eleRect.right > containerRect.right - margin
+    );
+};
+	'.
+	
+	driver executeScript: isElementOutsideContainer with: #().
+	^ driver executeScript: 'return isElementOutsideContainer(arguments[0], arguments[1])' with: { self. aContainer. aMarginNumber }.
 ]
 
 { #category : #'*Melvin-Dev' }
