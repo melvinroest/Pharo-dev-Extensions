@@ -16,21 +16,24 @@ MDevelopment class >> copyImageDirectoryCommandOn: builder [
 ]
 
 { #category : #'as yet unclassified' }
-MDevelopment class >> copyLocalIcebergPathCommandOn: builder [
-
-	<worldMenu>
-	
-	(builder item: 'Copy Iceberg Path')
-		parent: #'Melvin''s Toolkit';
-		order: 1.0;
-		action: [ Clipboard clipboardText: (SystemResolver defaultLocalDirectory / 'iceberg') fullName ]
-]
-
-{ #category : #'as yet unclassified' }
 MDevelopment class >> createMelvinsToolkitMenuTab: builder [
 	<worldMenu>
 
 	(builder item: 'Melvin''s Toolkit')
 		order: 100
 
+]
+
+{ #category : #'as yet unclassified' }
+MDevelopment class >> openLocalIcebergPathInItermOn: builder [
+
+	<worldMenu>
+	| path command |
+	path := (SystemResolver defaultLocalDirectory / 'iceberg') fullName.
+	command := 'open -a iTerm {1}' format: { path }.
+	
+	(builder item: 'Open Local Iceberg in iTerm')
+		parent: #'Melvin''s Toolkit';
+		order: 1.0;
+		action: [ LibC system: command ]
 ]
